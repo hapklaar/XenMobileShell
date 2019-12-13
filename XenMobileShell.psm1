@@ -341,8 +341,12 @@ Process {
         Set-Variable -name "XMSessionUseInactivity" -value $false -scope global
 
         #get the static timeout and deduct 30 seconds. 
-
-        $timeToExpiry = ([convert]::ToInt32((get-XMServerProperty -name "xms.publicapi.static.timeout" -skipCheck $true).value))* 60 - 30
+        # Note that for cloud-hosted sites this setting is not visible to the customer, and will evaluate to 0.
+        $staticTimeout = [convert]::ToInt32((get-XMServerProperty -name "xms.publicapi.static.timeout" -skipCheck $true).value)
+        if ($staticTimeout -eq 0) {
+            $staticTimeout = 60
+        }
+        $timeToExpiry = ($staticTimeout)* 60 - 30
         Write-Verbose ("expiry in seconds: " + $timeToExpiry)
 
         Set-Variable -name "XMSessionExpiry" -Value (get-Date).AddSeconds($timeToExpiry) -scope global
