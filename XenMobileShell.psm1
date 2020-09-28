@@ -15,6 +15,8 @@ $request = [pscustomobject]@{
     body = $null
 }
 
+#Use TLS1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 #supporting functions. These functions are called by other functions in the module. 
 
