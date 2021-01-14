@@ -4,6 +4,8 @@
 # Revision 2016.10.21: adjusted the confirmation on new-xmenrollment to ensure "YesToAll" actually works when pipelining. Corrected typo in notifyNow parameter name.
 # Revision 1.1.4 2016.11.24: corrected example in new-xmenrollment
 # Revision 1.2.0 2016.11.25: added the use of a PScredential object with the new-xmsession command.   
+# 20200920EdB: Added line to use TLS1.2
+# 20210114EdB: Added function to remove enrollment invitations
 
 
 
@@ -1811,6 +1813,52 @@ remove-xmclientproperty -key "TEST_PROPERTY"
 
 }
 
+function Remove-XMEnrollment {
+<#
+.SYNOPSIS
+Removes an enrollment invitation. 
+
+.DESCRIPTION
+Removes an enrollment invitation, requires a tokenid
+
+.PARAMETER id
+The token parameter identifies the invitation. You can get the token by searching for the correct invitation using get-xmenrollment. 
+
+.EXAMPLE
+Remove-XMEnrollment -token ep-b29a264f-c5d7-4eec-a2ba-e7c5acc05170 
+
+.EXAMPLE
+get-XMEnrollment -filter "[enrollment.invitationStatus.redeemed]" -user hap@hap.com | %{Remove-XMEnrollment -token $_.token}
+
+
+#>
+
+     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact="High")]
+
+    param(
+       
+        [parameter(ValueFromPipeLineByPropertyName,mandatory)][string[]]$token
+      
+    )
+
+    Begin {
+         #check session state
+         checkSession
+    }
+
+    Process {
+
+        if ($PSCmdlet.ShouldProcess($token)) {
+
+            deleteObject -url "/enrollment" -target $token
+        }
+
+        }
+
+
+
+}
+
 
 Export-ModuleMember -Function get-XMClientProperty
 Export-ModuleMember -Function get-XMDevice
@@ -1834,6 +1882,7 @@ Export-ModuleMember -Function remove-XMClientProperty
 Export-ModuleMember -Function remove-XMDevice
 Export-ModuleMember -Function remove-XMDeviceProperty
 Export-ModuleMember -Function remove-XMServerProperty
+Export-ModuleMember -Function remove-XMEnrollment
 Export-ModuleMember -Function set-XMClientProperty
 Export-ModuleMember -Function set-XMDeviceProperty
 Export-ModuleMember -Function set-XMServerProperty
