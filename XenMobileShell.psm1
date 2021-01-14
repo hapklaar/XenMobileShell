@@ -7,6 +7,20 @@
 # 20200920EdB: Added line to use TLS1.2
 # 20210114EdB: Added function to remove enrollment invitations
 
+<#
+When encountering the issue that the ID format has changed for devices, change the param section as follows:
+
+    param(
+        [parameter(ValueFromPipelineByPropertyName,mandatory=$true)][int[]]$id
+    )
+
+to
+
+  param(
+       [parameter(ValueFromPipelineByPropertyName,mandatory=$true)][guid[]]$id
+   )
+   
+#>
 
 
 #the request object is used by many of the functions. Do not delete.  
